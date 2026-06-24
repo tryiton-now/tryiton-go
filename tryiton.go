@@ -81,32 +81,38 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 // accept a public URL or a base64 data URL. Category is one of: auto, clothing,
 // eyewear, footwear, headwear, jewelry, accessories, others. clothing, jewelry,
 // and accessories require a Subcategory.
+// NumSamples is the number of output images (1-4); charged per image.
+// OutputFormat is "png" or "jpeg" (defaults to "png"). ModerationLevel is one of
+// "conservative", "permissive", or "none".
 type ClothesParams struct {
-	ModelImage       string `json:"model_image"`
-	GarmentImage     string `json:"garment_image"`
-	Category         string `json:"category,omitempty"`
-	Subcategory      string `json:"subcategory,omitempty"`
-	Mode             string `json:"mode,omitempty"`
-	NumSamples       int    `json:"num_samples,omitempty"`
-	OutputFormat     string `json:"output_format,omitempty"`
-	Seed             int    `json:"seed,omitempty"`
-	SegmentationFree *bool  `json:"segmentation_free,omitempty"`
-	GarmentPhotoType string `json:"garment_photo_type,omitempty"`
-	ModerationLevel  string `json:"moderation_level,omitempty"`
+	ModelImage      string `json:"model_image"`
+	GarmentImage    string `json:"garment_image"`
+	Category        string `json:"category,omitempty"`
+	Subcategory     string `json:"subcategory,omitempty"`
+	Mode            string `json:"mode,omitempty"`
+	NumSamples      int    `json:"num_samples,omitempty"`
+	OutputFormat    string `json:"output_format,omitempty"`
+	ModerationLevel string `json:"moderation_level,omitempty"`
 }
 
-// HairstyleParams are the inputs for a hairstyle try-on.
+// HairstyleParams are the inputs for a hairstyle try-on. NumSamples is the
+// number of output images (1-4); OutputFormat is "png" or "jpeg".
 type HairstyleParams struct {
-	FaceImage string `json:"face_image"`
-	Haircut   string `json:"haircut"`
-	HairColor string `json:"hair_color,omitempty"`
+	FaceImage    string `json:"face_image"`
+	Haircut      string `json:"haircut"`
+	HairColor    string `json:"hair_color,omitempty"`
+	NumSamples   int    `json:"num_samples,omitempty"`
+	OutputFormat string `json:"output_format,omitempty"`
 }
 
-// TattooParams are the inputs for a tattoo try-on.
+// TattooParams are the inputs for a tattoo try-on. NumSamples is the number of
+// output images (1-4); OutputFormat is "png" or "jpeg".
 type TattooParams struct {
-	BodyImage   string `json:"body_image"`
-	DesignImage string `json:"design_image"`
-	Placement   string `json:"placement,omitempty"`
+	BodyImage    string `json:"body_image"`
+	DesignImage  string `json:"design_image"`
+	Placement    string `json:"placement,omitempty"`
+	NumSamples   int    `json:"num_samples,omitempty"`
+	OutputFormat string `json:"output_format,omitempty"`
 }
 
 // Status is a job's status snapshot.

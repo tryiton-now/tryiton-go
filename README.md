@@ -74,7 +74,7 @@ Image inputs accept a public URL or a base64 data URL (`data:image/png;base64,..
 | `Category` | string | No | Item type: `auto`, `clothing`, `eyewear`, `footwear`, `headwear`, `jewelry`, `accessories`, or `others`. `auto` detects it for you. |
 | `Subcategory` | string | No | Required for `clothing` (`tops`, `bottoms`, `dresses`), `jewelry`, and `accessories`. |
 
-Additional clothing options (`Mode`, `NumSamples`, `OutputFormat`, `Seed`) are documented in the [API reference](https://docs.tryiton.now).
+Additional options (`Mode` and `ModerationLevel` for clothing; `NumSamples` 1–4 and `OutputFormat` `png`/`jpeg` for every try-on, including hairstyle and tattoo) are documented in the [API reference](https://docs.tryiton.now).
 
 ## Other endpoints
 
