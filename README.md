@@ -11,7 +11,7 @@ Full API reference: [docs.tryiton.now](https://docs.tryiton.now) · Get an API k
 ## Installation
 
 ```bash
-go get github.com/tryiton-now/tryiton-go
+go get github.com/tryiton-now/tryiton-go/v2
 ```
 
 Requires Go 1.20 or later.
@@ -30,7 +30,7 @@ import (
 	"os"
 	"time"
 
-	tryiton "github.com/tryiton-now/tryiton-go"
+	tryiton "github.com/tryiton-now/tryiton-go/v2"
 )
 
 func main() {
@@ -42,7 +42,7 @@ func main() {
 	ctx := context.Background()
 
 	// Submit a clothing try-on
-	jobID, err := client.TryOnClothes(ctx, tryiton.ClothesParams{
+	jobID, err := client.TryOnFashion(ctx, tryiton.FashionParams{
 		ModelImage:   "https://example.com/model.jpg",
 		GarmentImage: "https://example.com/tshirt.jpg",
 		Category:     "clothing",
@@ -65,7 +65,7 @@ Image inputs accept a public URL or a base64 data URL (`data:image/png;base64,..
 
 ## Core parameters
 
-`TryOnClothes` covers clothing and accessory try-on. The most important fields of `ClothesParams`:
+`TryOnFashion` covers clothing and accessory try-on. The most important fields of `FashionParams`:
 
 | Field | Type | Required | Description |
 | ----- | ---- | -------- | ----------- |

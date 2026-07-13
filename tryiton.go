@@ -77,14 +77,14 @@ func New(apiKey string, opts ...Option) (*Client, error) {
 	return c, nil
 }
 
-// ClothesParams are the inputs for a clothing/accessory try-on. Image fields
+// FashionParams are the inputs for a clothing/accessory try-on. Image fields
 // accept a public URL or a base64 data URL. Category is one of: auto, clothing,
 // eyewear, footwear, headwear, jewelry, accessories, others. clothing, jewelry,
 // and accessories require a Subcategory.
 // NumSamples is the number of output images (1-4); charged per image.
 // OutputFormat is "png" or "jpeg" (defaults to "png"). ModerationLevel is one of
 // "conservative", "permissive", or "none".
-type ClothesParams struct {
+type FashionParams struct {
 	ModelImage      string `json:"model_image"`
 	GarmentImage    string `json:"garment_image"`
 	Category        string `json:"category,omitempty"`
@@ -150,9 +150,9 @@ type Credits struct {
 	Reserved     int `json:"reserved"`
 }
 
-// TryOnClothes puts a garment or accessory on a person and returns the job id.
-func (c *Client) TryOnClothes(ctx context.Context, p ClothesParams) (string, error) {
-	return c.submit(ctx, "/tryon/clothes", p)
+// TryOnFashion puts a garment or accessory on a person and returns the job id.
+func (c *Client) TryOnFashion(ctx context.Context, p FashionParams) (string, error) {
+	return c.submit(ctx, "/tryon/fashion", p)
 }
 
 // TryOnHairstyle restyles a person's hair and returns the job id.
