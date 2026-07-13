@@ -82,8 +82,10 @@ Additional options (`Mode` and `ModerationLevel` for clothing; `NumSamples` 1–
 // Hairstyle try-on (see tryiton.Haircuts for all supported values)
 client.TryOnHairstyle(ctx, tryiton.HairstyleParams{FaceImage: faceURL, Haircut: "BuzzCut", HairColor: "ash blonde"})
 
-// Tattoo try-on
+// Tattoo try-on — place it with free text...
 client.TryOnTattoo(ctx, tryiton.TattooParams{BodyImage: bodyURL, DesignImage: designURL, Placement: "on the right forearm, small"})
+// ...or pin the exact spot with a region box (normalized 0–1, from the image's top-left)
+client.TryOnTattoo(ctx, tryiton.TattooParams{BodyImage: bodyURL, DesignImage: designURL, Region: &tryiton.TattooRegion{X: 0.32, Y: 0.18, W: 0.28, H: 0.34}})
 
 // Poll a job manually, or check your credit balance
 status, _ := client.GetStatus(ctx, jobID)  // *Status{ Status, Output, Error }

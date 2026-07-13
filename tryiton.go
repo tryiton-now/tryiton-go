@@ -105,14 +105,28 @@ type HairstyleParams struct {
 	OutputFormat string `json:"output_format,omitempty"`
 }
 
+// TattooRegion is a rectangle on the body image, normalized 0-1 from its
+// TOP-LEFT corner. Each side must be at least 0.06 of the image.
+type TattooRegion struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+	W float64 `json:"w"`
+	H float64 `json:"h"`
+}
+
 // TattooParams are the inputs for a tattoo try-on. NumSamples is the number of
 // output images (1-4); OutputFormat is "png" or "jpeg".
+//
+// Position the ink in either of two ways, and they compose: Placement is free
+// text ("on the right forearm, small"), while Region pins the exact spot on the
+// body image — with a Region set, Placement only describes size/style.
 type TattooParams struct {
-	BodyImage    string `json:"body_image"`
-	DesignImage  string `json:"design_image"`
-	Placement    string `json:"placement,omitempty"`
-	NumSamples   int    `json:"num_samples,omitempty"`
-	OutputFormat string `json:"output_format,omitempty"`
+	BodyImage    string        `json:"body_image"`
+	DesignImage  string        `json:"design_image"`
+	Placement    string        `json:"placement,omitempty"`
+	Region       *TattooRegion `json:"region,omitempty"`
+	NumSamples   int           `json:"num_samples,omitempty"`
+	OutputFormat string        `json:"output_format,omitempty"`
 }
 
 // Status is a job's status snapshot.
