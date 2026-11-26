@@ -92,6 +92,35 @@ status, _ := client.GetStatus(ctx, jobID)  // *Status{ Status, Output, Error }
 credits, _ := client.GetCredits(ctx)        // *Credits{ OnDemand, Subscription, Purchased, Reserved }
 ```
 
+## Live try-on (real-time webcam)
+
+Your server prepares garments and starts sessions with the API key. The shopper's browser streams with the
+[`tryiton-live`](https://www.npmjs.com/package/tryiton-live) package, using only the session-scoped response.
+
+```go
+// Once per product, e.g. at catalog sync (cached per image + category):
+garment, err := client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{
+	GarmentImage: productImageURL,
+	Category:     "clothing",
+	Subcategory:  "tops",
+})
+
+// When a shopper opens live try-on. Return start to the browser as-is:
+start, err := client.StartLiveSession(ctx, tryiton.StartLiveSessionParams{
+	GarmentID:     garment.ID,
+	EndUserID:     shopperID,                  // one stream per end user
+	AllowedOrigin: "https://shop.example.com", // locks the media token to your site
+})
+json.NewEncoder(w).Encode(start) // the JSON tags reproduce the API response
+
+client.GetLiveSession(ctx, start.Session.ID)  // *LiveSession{ Status, Seconds, CreditsCharged, ... }
+client.StopLiveSession(ctx, start.Session.ID) // end it from your server
+client.GetLiveConfig(ctx)                     // *LiveConfig{ Enabled, SecondsPerCredit, MaxSeconds, ... }
+```
+
+Billing is per `SecondsPerCredit` seconds of streamed video, from the first try-on frame. Garment switches during a
+session are free.
+
 ## Error handling
 
 API and job failures are returned as `*tryiton.Error`, which carries the HTTP status code and the API error name.
@@ -106,6 +135,9 @@ if err != nil {
 }
 ```
 
+Failed jobs come back from `WaitForResult` as an `*Error` with `Status` 0, `Name` `"ProcessingError"` and the job's
+failure reason as `Message`.
+
 ## Notes
 
 - Output image URLs expire 72 hours after completion. Download any results you want to keep.
@@ -114,6 +146,19 @@ if err != nil {
 ## Documentation
 
 Full documentation, parameter reference, and guides: [docs.tryiton.now](https://docs.tryiton.now)
+
+## Development
+
+```bash
+gofmt -l .        # must print nothing
+go vet ./...
+go test -race ./...
+```
+
+`testdata/sdk-cases.json` is the contract fixture shared by every TryItOn SDK. It's generated, so don't edit it here:
+change `tryiton/backend/api-contract/sdk-cases.json` and run `node tryiton-sdk/sync-contract.mjs`. `contract_test.go`
+runs every case against a local `httptest` server. Releases are git tags (`vX.Y.Z`); bump `Version` in `version.go`
+to match and add the entry to [CHANGELOG.md](CHANGELOG.md). CI runs the checks above on Go 1.20, 1.21 and 1.22.
 
 ## License
 
