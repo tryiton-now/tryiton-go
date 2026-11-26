@@ -20,16 +20,18 @@ var Haircuts = []string{
 // eyewear, footwear, headwear, jewelry, accessories, others. clothing, jewelry,
 // and accessories require a Subcategory.
 // NumSamples is the number of output images (1-4); charged per image.
-// OutputFormat is "png" or "jpeg" (defaults to "png"). ModerationLevel is one of
-// "conservative", "permissive", or "none".
+// OutputFormat is "png" or "jpeg" (defaults to "png").
 type FashionParams struct {
-	ModelImage      string `json:"model_image"`
-	GarmentImage    string `json:"garment_image"`
-	Category        string `json:"category,omitempty"`
-	Subcategory     string `json:"subcategory,omitempty"`
-	Mode            string `json:"mode,omitempty"`
-	NumSamples      int    `json:"num_samples,omitempty"`
-	OutputFormat    string `json:"output_format,omitempty"`
+	ModelImage   string `json:"model_image"`
+	GarmentImage string `json:"garment_image"`
+	Category     string `json:"category,omitempty"`
+	Subcategory  string `json:"subcategory,omitempty"`
+	// Deprecated: ignored by the API; will be removed in v3.
+	Mode         string `json:"mode,omitempty"`
+	NumSamples   int    `json:"num_samples,omitempty"`
+	OutputFormat string `json:"output_format,omitempty"`
+	// Deprecated: validated ("conservative", "permissive" or "none") but has no
+	// effect; the AI providers' own safety filters always apply. Will be removed in v3.
 	ModerationLevel string `json:"moderation_level,omitempty"`
 }
 

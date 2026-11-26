@@ -4,7 +4,13 @@ All notable changes to the TryItOn Go SDK are documented here. The format is bas
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project follows
 [Semantic Versioning](https://semver.org/). Versions are released as git tags (`vX.Y.Z`).
 
-## [2.1.0] - Unreleased
+## [Unreleased]
+
+### Deprecated
+
+- `FashionParams.Mode` and `FashionParams.ModerationLevel`: the API ignores `mode` and validates `moderation_level` without applying it. Marked `Deprecated:`; removed in v3.
+
+## [2.1.0] - 2026-11-26
 
 ### Added
 
@@ -57,7 +63,8 @@ All notable changes to the TryItOn Go SDK are documented here. The format is bas
 
 - Initial release: clothing, hairstyle and tattoo try-on, `GetStatus`, `WaitForResult` and `GetCredits`.
 
-[2.1.0]: https://github.com/tryiton-now/tryiton-go/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/tryiton-now/tryiton-go/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/tryiton-now/tryiton-go/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/tryiton-now/tryiton-go/compare/v1.1.0...v2.0.0
 [1.1.0]: https://github.com/tryiton-now/tryiton-go/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/tryiton-now/tryiton-go/compare/v0.1.0...v1.0.0
