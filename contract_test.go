@@ -279,9 +279,19 @@ func callContractMethod(ctx context.Context, t *testing.T, c *Client, method str
 		return c.GetLiveConfig(ctx)
 	case "prepareLiveGarment":
 		return c.PrepareLiveGarment(ctx, PrepareLiveGarmentParams{
-			GarmentImage: paramString(p, "garmentImage"),
-			Category:     paramString(p, "category"),
-			Subcategory:  paramString(p, "subcategory"),
+			GarmentImage:  paramString(p, "garmentImage"),
+			Category:      paramString(p, "category"),
+			Subcategory:   paramString(p, "subcategory"),
+			DetailImages:  paramStrings(p, "detailImages"),
+			Description:   paramString(p, "description"),
+			Instructions:  paramString(p, "instructions"),
+			EnhancePrompt: paramBool(p, "enhancePrompt"),
+		})
+	case "prepareLiveOutfit":
+		return c.PrepareLiveOutfit(ctx, PrepareLiveOutfitParams{
+			GarmentIDs:    paramStrings(p, "garmentIds"),
+			Instructions:  paramString(p, "instructions"),
+			EnhancePrompt: paramBool(p, "enhancePrompt"),
 		})
 	case "startLiveSession":
 		return c.StartLiveSession(ctx, StartLiveSessionParams{
@@ -307,6 +317,25 @@ func paramString(p map[string]any, key string) string {
 func paramInt(p map[string]any, key string) int {
 	n, _ := p[key].(float64)
 	return int(n)
+}
+
+func paramStrings(p map[string]any, key string) []string {
+	list, _ := p[key].([]any)
+	var out []string
+	for _, v := range list {
+		s, _ := v.(string)
+		out = append(out, s)
+	}
+	return out
+}
+
+// paramBool is nil when the case leaves the param out, so false stays distinct.
+func paramBool(p map[string]any, key string) *bool {
+	b, ok := p[key].(bool)
+	if !ok {
+		return nil
+	}
+	return &b
 }
 
 func paramRegion(p map[string]any, key string) *TattooRegion {

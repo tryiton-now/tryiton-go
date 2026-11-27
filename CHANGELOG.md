@@ -6,6 +6,19 @@ All notable changes to the TryItOn Go SDK are documented here. The format is bas
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-27
+
+### Added
+
+- `PrepareLiveGarmentParams` takes optional overrides: `DetailImages` (up to 3 extra views that sharpen the
+  description), `Description` (your item description, used in the generated prompt), `Instructions` (your own prompt,
+  used verbatim) and `EnhancePrompt` (`*bool`; nil keeps the default `true`, `Bool(false)` turns it off).
+- `PrepareLiveOutfit` and `PrepareLiveOutfitParams` (`POST /live/outfits`): combine 2 or 3 prepared garments into one
+  outfit, returned as a `LiveGarment` whose `ID` works wherever a garment ID does.
+- `LiveGarment` fields `Prompt`, `EnhancePrompt` and `Items` (an outfit's garment IDs top to bottom, nil for a single
+  garment). `Category` can now also be `"outfit"`.
+- `Bool` helper for optional boolean params.
+
 ### Deprecated
 
 - `FashionParams.Mode` and `FashionParams.ModerationLevel`: the API ignores `mode` and validates `moderation_level` without applying it. Marked `Deprecated:`; removed in v3.
