@@ -27,20 +27,55 @@ type LiveConfig struct {
 // is a public URL or base64 data URL (a product photo on a plain background
 // works best). Category is recommended (same values as FashionParams); omit it
 // to let it be detected. Subcategory is e.g. "tops" for clothing.
+//
+// The rest are optional overrides. DetailImages are up to 3 extra views (URLs
+// or data URLs) that only sharpen the generated description. Description (at
+// most 200 characters) is your own description of the item, used inside the
+// generated prompt. Instructions (at most 1000 characters) is your own prompt,
+// used verbatim instead of the generated one. EnhancePrompt lets the stream
+// model enhance the prompt (true when nil); set it with Bool(false) to turn
+// that off.
 type PrepareLiveGarmentParams struct {
-	GarmentImage string `json:"garment_image"`
-	Category     string `json:"category,omitempty"`
-	Subcategory  string `json:"subcategory,omitempty"`
+	GarmentImage  string   `json:"garment_image"`
+	Category      string   `json:"category,omitempty"`
+	Subcategory   string   `json:"subcategory,omitempty"`
+	DetailImages  []string `json:"detail_images,omitempty"`
+	Description   string   `json:"description,omitempty"`
+	Instructions  string   `json:"instructions,omitempty"`
+	EnhancePrompt *bool    `json:"enhance_prompt,omitempty"`
 }
 
-// LiveGarment is a garment prepared for live try-on. Pass ID to
-// StartLiveSession (or to the browser's garment switch).
+// PrepareLiveOutfitParams are the inputs for PrepareLiveOutfit. GarmentIDs are
+// 2 or 3 distinct prepared garment IDs (e.g. a top, trousers and shoes), in any
+// order. Instructions (at most 1000 characters) replaces the generated outfit
+// prompt; the items' own Instructions don't carry over. EnhancePrompt is true
+// when nil; set it with Bool(false) to turn it off.
+type PrepareLiveOutfitParams struct {
+	GarmentIDs    []string `json:"garment_ids"`
+	Instructions  string   `json:"instructions,omitempty"`
+	EnhancePrompt *bool    `json:"enhance_prompt,omitempty"`
+}
+
+// Bool returns a pointer to v, for optional boolean params such as
+// PrepareLiveGarmentParams.EnhancePrompt.
+func Bool(v bool) *bool {
+	return &v
+}
+
+// LiveGarment is a garment or outfit prepared for live try-on. Pass ID to
+// StartLiveSession (or to the browser's garment switch). Category is "outfit"
+// for an outfit. Prompt is the stream prompt and EnhancePrompt whether the
+// stream model enhances it. Items is an outfit's garment IDs, top to bottom,
+// and nil for a single garment.
 type LiveGarment struct {
-	ID          string  `json:"id"`
-	Category    string  `json:"category"`
-	Subcategory *string `json:"subcategory"`
-	Description *string `json:"description"`
-	CreatedAt   string  `json:"createdAt"`
+	ID            string   `json:"id"`
+	Category      string   `json:"category"`
+	Subcategory   *string  `json:"subcategory"`
+	Description   *string  `json:"description"`
+	Prompt        string   `json:"prompt"`
+	EnhancePrompt bool     `json:"enhancePrompt"`
+	Items         []string `json:"items"`
+	CreatedAt     string   `json:"createdAt"`
 }
 
 // StartLiveSessionParams are the optional inputs for StartLiveSession.
@@ -126,6 +161,20 @@ func (c *Client) PrepareLiveGarment(ctx context.Context, p PrepareLiveGarmentPar
 		return nil, err
 	}
 	return &out.Garment, nil
+}
+
+// PrepareLiveOutfit combines 2 or 3 prepared garments into one outfit the
+// stream applies at once. The outfit is a LiveGarment (Category "outfit"):
+// pass its ID wherever a garment ID goes (StartLiveSession, the browser's
+// garment switch). It's cached per set of garments and overrides, in any order.
+func (c *Client) PrepareLiveOutfit(ctx context.Context, p PrepareLiveOutfitParams) (*LiveGarment, error) {
+	var out struct {
+		Outfit LiveGarment `json:"outfit"`
+	}
+	if err := c.do(ctx, http.MethodPost, "/live/outfits", p, &out); err != nil {
+		return nil, err
+	}
+	return &out.Outfit, nil
 }
 
 // StartLiveSession starts a live session for one end user and holds the first

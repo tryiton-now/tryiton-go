@@ -121,6 +121,45 @@ client.GetLiveConfig(ctx)                     // *LiveConfig{ Enabled, SecondsPe
 Billing is per `SecondsPerCredit` seconds of streamed video, from the first try-on frame. Garment switches during a
 session are free.
 
+`PrepareLiveGarmentParams` also takes optional overrides:
+
+```go
+client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{
+	GarmentImage:  productImageURL,
+	Category:      "footwear",
+	DetailImages:  []string{sideViewURL, backViewURL},       // up to 3 extra views; they only sharpen the description
+	Description:   "black leather knee-high boots",          // your description (max 200), used in the generated prompt
+	Instructions:  "Replace only the shoes with the boots.", // or your own prompt (max 1000), used verbatim
+	EnhancePrompt: tryiton.Bool(false),                      // keep the prompt as-is (nil = default true)
+})
+```
+
+### Outfits
+
+Combine 2–3 prepared garments into one outfit worn together. The outfit's `ID` works wherever a garment ID does
+(`StartLiveSession`, the browser's `switchGarment`). To swap one item, prepare the new combination (cached) and switch to it.
+
+```go
+top, err := client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{GarmentImage: shirtURL, Category: "clothing", Subcategory: "tops"})
+trousers, err := client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{GarmentImage: trousersURL, Category: "clothing", Subcategory: "bottoms"})
+shoes, err := client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{GarmentImage: shoesURL, Category: "footwear"})
+
+outfit, err := client.PrepareLiveOutfit(ctx, tryiton.PrepareLiveOutfitParams{
+	GarmentIDs: []string{top.ID, trousers.ID, shoes.ID},
+})
+// outfit.Category == "outfit", outfit.Items = the garment IDs top to bottom
+start, err := client.StartLiveSession(ctx, tryiton.StartLiveSessionParams{GarmentID: outfit.ID, EndUserID: shopperID})
+
+// Later the shopper picks another top: prepare that outfit and switch the running stream to it.
+jacket, err := client.PrepareLiveGarment(ctx, tryiton.PrepareLiveGarmentParams{GarmentImage: jacketURL, Category: "clothing", Subcategory: "tops"})
+next, err := client.PrepareLiveOutfit(ctx, tryiton.PrepareLiveOutfitParams{
+	GarmentIDs: []string{jacket.ID, trousers.ID, shoes.ID},
+})
+// Send next.ID to the browser, which switches with tryiton-live: await live.switchGarment(id);
+```
+
+`PrepareLiveOutfitParams` also takes `Instructions` and `EnhancePrompt`, as above.
+
 ## Error handling
 
 API and job failures are returned as `*tryiton.Error`, which carries the HTTP status code and the API error name.
